@@ -1,0 +1,56 @@
+# Drop-in service definition for the LilServ homelab stack.
+# On LilServ: copy to /home/chimera/homelab/bobs-apps.yml (or include from compose.yml),
+# create the data dir, then `docker compose up -d bobs-apps`.
+# Caddy needs one route added — see DEPLOY.md for the exact snippet.
+
+services:
+  bobs-apps:
+    build: .
+    image: lilserv/bobs-apps:latest
+    container_name: homelab-bobs-apps
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8090:8080"   # loopback-only; Caddy is the front door on :80
+    environment:
+      PORT: "8080"
+      DOCS_DIR: /data/docs
+      SLIDESHOW_DIR: /data/slideshow-photos
+      SLIDESHOW_AUDIO_DIR: /data/slideshow-audio   # yt-dlp renders (src/audio.js)
+      DB_PATH: /data/bobs-apps.db
+      CHROMA_DIR: /data/chromadb_data
+      # LM Studio box (RAG answer generation). Override if it moves — rag/query.py reads this name.
+      LM_STUDIO_URL: http://192.168.0.191:1234/v1/chat/completions
+    volumes:
+      - /home/chimera/homelab/bobs-apps-data:/data   # docs/, bobs-apps.db, chromadb_data/ survive rebuilds (absolute on purpose)
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 90s          # first boot downloads the MiniLM embedding model
+    networks:
+      - default
+      - homelab                  # required for the kokoro alias + Caddy reach; see pitfalls in bobs-apps skill
+
+  # Read-aloud TTS engine (Kokoro-82M, CPU ONNX). Deliberately NO published ports:
+  # reachable only from containers on the homelab network — bobs-apps proxies it at
+  # /api/tts/*; nothing routes to it through Caddy. Override URL via TTS_URL on bobs-apps.
+  kokoro:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+    container_name: homelab-kokoro
+    restart: unless-stopped
+    networks:
+      - homelab
+    environment:
+      DEFAULT_VOICE: "af_heart"
+      DEVICE: "cpu"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8880/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+networks:
+  homelab:
+    external: true

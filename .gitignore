@@ -1,0 +1,18 @@
+node_modules/
+.env
+*.db
+*.db-shm
+*.db-wal
+
+# research scratch
+research_tmp/
+
+# runtime artifacts (restored/kept locally, not committed)
+bobs-apps.db*
+chromadb_data/
+__pycache__/
+.bin/
+.venv/
+*.log
+/tmp/
+docs-backup-*/

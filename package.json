@@ -1,0 +1,21 @@
+{
+  "name": "bobs-apps",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/test_astro.js && node tests/test_tz.js && node tests/test_migrations.js && node tests/test_tts.js && .venv/bin/python tests/test_chunker.py && .venv/bin/python tests/test_extraction.py && node tests/test_api.js && node tests/test_slideshows.js && node tests/test_grounding.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "astronomy-engine": "^2.1.19",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1",
+    "tz-lookup": "^6.1.25"
+  }
+}
