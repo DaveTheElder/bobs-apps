@@ -20,11 +20,12 @@ Exit status: 0 = agreement (or engine silent), 1 = at least one disagreement,
 """
 import argparse
 import json
+import os
 import sys
 import urllib.request
 from datetime import date, timedelta
 
-BASE = "http://192.168.0.222/api/astro"
+BASE = os.environ.get("BOBS_APPS_BASE", "http://127.0.0.1:8090") + "/api/astro"
 # Longitude comparisons at planetary precision. A pair whose orb misses the
 # published cutoff by less than this is reported as BOUNDARY (either verdict
 # defensible), not a hard disagreement — the paper demands the dispute itself

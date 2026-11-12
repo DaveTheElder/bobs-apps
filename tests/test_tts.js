@@ -9,6 +9,12 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
+/**
+ * TABLE OF CONTENTS
+ *  L  21- 69  Part 1: sentence-safe chunker unit tests
+ *  L  70- 93  Part 1a/1b: voice-shape normalization, FE/BE chunker parity
+ *  L  94-258  Part 2: /api/tts proxy against a stub upstream + cache behavior
+ */
 const ROOT = path.join(__dirname, '..');
 const { splitSpeechChunks, CHUNK_MAX } = require('../src/tts');
 

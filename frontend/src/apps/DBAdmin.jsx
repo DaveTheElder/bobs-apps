@@ -1,3 +1,5 @@
+// apps/DBAdmin.jsx — dev-only database browser: table list, paged row view,
+// and SQL runner against the /api/db/{tables,query,backup} routes.
 import React, { useState, useEffect } from 'react';
 import { apiFetch, apiUrl } from '../api';
 

@@ -1,3 +1,6 @@
+// src/App.jsx — app shell: loads the app registry from /api/apps, mounts each
+// app via a static entry_point map (dynamic import() paths break under prod
+// bundling), hash-routes between apps, wraps the active app in ErrorBoundary.
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import ErrorBoundary from './ErrorBoundary';

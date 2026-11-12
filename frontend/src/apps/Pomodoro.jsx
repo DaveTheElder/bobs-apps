@@ -1,3 +1,5 @@
+// apps/Pomodoro.jsx — pomodoro timer: work/short/long modes with session
+// counting; setInterval-driven, no backend.
 import React, { useState, useEffect } from 'react';
 
 export default function Pomodoro() {

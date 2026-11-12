@@ -1,3 +1,5 @@
+// apps/Notes.jsx — sticky notes: CRUD against /api/notes (server-backed, not
+// localStorage), modal editor.
 import React, { useState, useEffect } from 'react';
 import { apiFetch } from '../api';
 

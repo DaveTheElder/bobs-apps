@@ -1,3 +1,5 @@
+// apps/ColorPicker.jsx — paint color manager: hex/RGB/CMYK conversion, saved
+// swatches in localStorage, and mix ratios printed per 10 ml of paint.
 import React, { useState } from 'react';
 
 /**

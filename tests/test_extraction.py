@@ -1,4 +1,4 @@
-# Tests for rag/extract_text.py against real files in documents/.
+# Tests for rag/extract_text.py against fixture files in tests/fixtures/.
 import sys, os
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, os.path.join(ROOT, "rag"))
@@ -7,7 +7,7 @@ from extract_text import extract_text_from_file
 
 
 def test_pdf_extracts():
-    fp = os.path.join(ROOT, "documents", "test-report.pdf")
+    fp = os.path.join(ROOT, "tests", "fixtures", "test-report.pdf")
     r = extract_text_from_file(fp, "Test Report")
     assert r and "error" not in r
     assert r["page_count"] >= 1
@@ -16,7 +16,7 @@ def test_pdf_extracts():
 
 
 def test_docx_extracts():
-    fp = os.path.join(ROOT, "documents", "ef1030fe-ff50-4abc-a495-01a0c908bd1d.docx")
+    fp = os.path.join(ROOT, "tests", "fixtures", "test-guide.docx")
     r = extract_text_from_file(fp, "RAG Guide")
     assert r and "error" not in r, f"docx extraction failed: {r}"
     assert len(r["text"]) > 100

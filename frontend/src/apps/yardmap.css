@@ -1,0 +1,123 @@
+/* frontend/src/apps/yardmap.css — Yard Map styles.
+   Every rule is scoped under .yardmap-app: the SPA mounts apps one-at-a-time
+   in shared chrome and unscoped rules leak into siblings. */
+
+.yardmap-app {
+  --ym-ink: #23272e;
+  --ym-accent: #2b6cb0;
+  --ym-warn-bg: #fff7e6;
+  --ym-warn-bd: #e8b64c;
+  --ym-bad-bg: #fdecec;
+  --ym-bad-bd: #d05252;
+  --ym-line: #dde1e7;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--ym-ink);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 12px 48px;
+}
+
+.yardmap-app .shell { margin-bottom: 12px; }
+.yardmap-app .map-title { margin: 0; font-size: 1.35rem; }
+.yardmap-app .sub { margin: 4px 0 0; color: #5c6370; font-size: 0.92rem; }
+.yardmap-app .back {
+  background: none; border: none; color: var(--ym-accent);
+  font-size: 1rem; padding: 6px 0; cursor: pointer;
+}
+
+/* notices */
+.yardmap-app .notice {
+  border-radius: 10px; padding: 10px 14px; margin: 10px 0;
+  font-size: 0.92rem; line-height: 1.45;
+}
+.yardmap-app .notice.warn { background: var(--ym-warn-bg); border: 1px solid var(--ym-warn-bd); }
+.yardmap-app .notice.bad { background: var(--ym-bad-bg); border: 1px solid var(--ym-bad-bd); }
+.yardmap-app .notice ol { margin: 8px 0 0; padding-left: 20px; }
+.yardmap-app .notice code {
+  background: rgba(0, 0, 0, 0.06); padding: 1px 5px; border-radius: 4px;
+  font-size: 0.85em; word-break: break-all;
+}
+
+/* plot */
+.yardmap-app .plot {
+  width: 100%; height: 320px; display: block;
+  background: #f7f8fa; border: 1px solid var(--ym-line); border-radius: 10px;
+}
+
+/* GPS controls — big touch targets for outdoor gloves and sun */
+.yardmap-app .gps-bar { display: flex; gap: 10px; margin: 12px 0 6px; }
+.yardmap-app .gps-bar button {
+  flex: 1; min-height: 52px; border-radius: 12px; border: none;
+  font-size: 1.05rem; font-weight: 600; cursor: pointer; color: #fff;
+}
+.yardmap-app .gps-bar .start { background: #2f9e44; }
+.yardmap-app .gps-bar .stop { background: #d05252; }
+.yardmap-app .gps-bar .mark { background: var(--ym-accent); }
+.yardmap-app .gps-bar button:disabled { background: #b9bfc9; cursor: not-allowed; }
+
+.yardmap-app .live { font-size: 0.85rem; margin: 2px 2px 10px; color: #5c6370; }
+.yardmap-app .acc.good { color: #2b8a3e; }
+.yardmap-app .acc.fair { color: #b07d1a; }
+.yardmap-app .acc.poor { color: #c0392b; }
+
+/* stats */
+.yardmap-app .stats {
+  display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center;
+  background: #f2f5f9; border: 1px solid var(--ym-line); border-radius: 10px;
+  padding: 10px 14px; font-size: 0.95rem; margin-bottom: 12px;
+}
+.yardmap-app .stats b { color: var(--ym-accent); }
+.yardmap-app .close-loop { margin-left: auto; display: flex; gap: 6px; align-items: center; cursor: pointer; }
+
+/* points list */
+.yardmap-app .points { list-style: none; margin: 0 0 14px; padding: 0; }
+.yardmap-app .point-row {
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--ym-line); padding: 8px 2px;
+}
+.yardmap-app .point-row .seq {
+  width: 26px; height: 26px; flex: none; border-radius: 50%;
+  background: var(--ym-accent); color: #fff; font-size: 0.8rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.yardmap-app .point-row .label {
+  flex: 1; min-width: 0; border: 1px solid transparent; border-radius: 8px;
+  padding: 8px 10px; font-size: 0.95rem; background: transparent;
+}
+.yardmap-app .point-row .label:focus { border-color: var(--ym-accent); background: #fff; outline: none; }
+.yardmap-app .point-row .dist { white-space: nowrap; font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+.yardmap-app .point-row .acc { font-size: 0.8rem; min-width: 52px; text-align: right; }
+.yardmap-app .del {
+  background: none; border: none; color: #c0392b; font-size: 1.1rem;
+  padding: 8px; cursor: pointer; flex: none;
+}
+
+.yardmap-app .export {
+  background: none; border: 1px solid var(--ym-accent); color: var(--ym-accent);
+  border-radius: 10px; padding: 10px 16px; font-size: 0.95rem; cursor: pointer;
+}
+
+/* map list */
+.yardmap-app .new-map { display: flex; gap: 8px; margin: 10px 0 16px; }
+.yardmap-app .new-map input {
+  flex: 1; padding: 12px 14px; border: 1px solid var(--ym-line);
+  border-radius: 10px; font-size: 1rem;
+}
+.yardmap-app .new-map button {
+  background: var(--ym-accent); color: #fff; border: none; border-radius: 10px;
+  padding: 0 18px; font-size: 1rem; cursor: pointer;
+}
+.yardmap-app .new-map button:disabled { background: #b9bfc9; cursor: not-allowed; }
+
+.yardmap-app .maps { list-style: none; margin: 0; padding: 0; }
+.yardmap-app .map-card {
+  display: flex; align-items: center;
+  border: 1px solid var(--ym-line); border-radius: 12px; margin-bottom: 10px;
+}
+.yardmap-app .map-card .open {
+  flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+  background: none; border: none; text-align: left; padding: 14px 16px;
+  cursor: pointer; color: var(--ym-ink); font-size: 1rem;
+}
+.yardmap-app .map-card .open span { color: #5c6370; font-size: 0.85rem; }
+.yardmap-app .maps .empty { color: #7a828e; padding: 18px 4px; font-size: 0.95rem; }

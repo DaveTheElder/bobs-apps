@@ -1,5 +1,5 @@
 # Drop-in service definition for the LilServ homelab stack.
-# On LilServ: copy to /home/chimera/homelab/bobs-apps.yml (or include from compose.yml),
+# On the deploy host: copy to ~/homelab/bobs-apps.yml (or include from compose.yml),
 # create the data dir, then `docker compose up -d bobs-apps`.
 # Caddy needs one route added — see DEPLOY.md for the exact snippet.
 
@@ -18,10 +18,22 @@ services:
       SLIDESHOW_AUDIO_DIR: /data/slideshow-audio   # yt-dlp renders (src/audio.js)
       DB_PATH: /data/bobs-apps.db
       CHROMA_DIR: /data/chromadb_data
-      # LM Studio box (RAG answer generation). Override if it moves — rag/query.py reads this name.
-      LM_STUDIO_URL: http://192.168.0.191:1234/v1/chat/completions
+      # Model hosts come from the untracked .env next to this compose file (compose
+      # auto-loads it): LM_HOST, TTS_HOST. Defaults keep a fresh clone booting
+      # against co-located services instead of leaking the author's LAN.
+      # --api-url is passed; the Node route always passes one from RAG_PROVIDERS now.
+      LM_STUDIO_URL: http://${LM_HOST:-127.0.0.1}:1234/v1/chat/completions
+      # Generation providers for RAG (name=OpenAI-compatible base, comma list). The model
+      # picker aggregates all; unreachable ones are skipped, not fatal. gufo = preset
+      # launcher on the model box, chat lane :8787 (ports fixed across presets).
+      RAG_PROVIDERS: lmstudio=http://${LM_HOST:-127.0.0.1}:1234/v1,gufo=http://${LM_HOST:-127.0.0.1}:8787/v1
+      # Read-aloud engine lives on the Tom sandbox CPU lane (kokoro-onnx shim,
+      # tom-ssh-sandbox tts/server.py on :8092) — the homelab `kokoro` container
+      # below never came up on LilServ (ghcr image never landed). Point back by
+      # deleting this line once that container actually runs.
+      TTS_URL: http://${TTS_HOST:-127.0.0.1}:8092
     volumes:
-      - /home/chimera/homelab/bobs-apps-data:/data   # docs/, bobs-apps.db, chromadb_data/ survive rebuilds (absolute on purpose)
+      - ${HOME}/homelab/bobs-apps-data:/data   # docs/, bobs-apps.db, chromadb_data/ survive rebuilds (absolute on purpose)
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
       interval: 30s

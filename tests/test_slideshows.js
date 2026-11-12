@@ -1,6 +1,15 @@
 // tests/test_slideshows.js — boots server.js against a TEMP db + SLIDESHOW_DIR,
 // exercises every slideshow route (docs/archive/SLIDESHOW_PLAN.md phase 1).
 // Run: node tests/test_slideshows.js   (PORT 8093 by default)
+/**
+ * TABLE OF CONTENTS
+ *  L   1- 59  boot: temp db + SLIDESHOW_DIR, yt-dlp stub, image fixtures
+ *  L  60-107  show CRUD + PATCH validation (music_url host, mode/transition)
+ *  L 108-175  photo upload, ordering, byte serving, traversal guard
+ *  L 176-221  PUT order rules + per-photo caption/duration patches
+ *  L 222-263  delete photo/show disk cleanup + music download lifecycle
+ *  L 264-314  audio byte serving with Range, failures, final assertions
+ */
 process.env.PORT = process.env.TEST_PORT || '8093';
 const fs = require('fs');
 const os = require('os');

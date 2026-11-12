@@ -1,3 +1,6 @@
+// apps/Weather.jsx — PLACEHOLDER page: registry slot only, no logic and no
+// API route. Keep until a real weather app lands, then replace both this and
+// the app_registry row.
 import React from 'react';
 
 export default function Weather() {

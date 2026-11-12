@@ -1,0 +1,493 @@
+/* frontend/src/apps/newsroom.css — newspaper skin for the News Room app.
+ *
+ * Purpose: make the news feed read like an actual broadsheet — serif type,
+ * hairline rules, masthead, column layout — instead of generic SaaS cards.
+ * Contract: every rule is scoped under .newsroom-paper (or .newsroom-form /
+ * .newsroom-article wrappers this app owns) so nothing leaks into the other
+ * apps in the SPA. No external fonts: homelab stays offline-friendly, so the
+ * stack walks system serifs (Georgia → Times).
+ */
+
+.newsroom-paper {
+  --ink: #1c1a17;
+  --ink-dim: #5c564d;
+  --paper: #faf7f0;
+  --rule: #c9c2b4;
+  --kicker: #8b1a1a;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  border: 1px solid var(--rule);
+  padding: 28px 32px 40px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* ── Masthead ───────────────────────────────────────────────────────── */
+
+.newsroom-masthead {
+  text-align: center;
+  border-top: 4px double var(--ink);
+  border-bottom: 4px double var(--ink);
+  padding: 14px 0 10px;
+  margin-bottom: 6px;
+}
+
+.newsroom-masthead h1 {
+  font-size: clamp(34px, 6vw, 56px);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+}
+
+.newsroom-dateline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border-bottom: 1px solid var(--ink);
+  padding: 6px 2px 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.newsroom-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.newsroom-file-btn {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  padding: 5px 14px;
+  cursor: pointer;
+}
+.newsroom-file-btn:hover { background: var(--ink); color: var(--paper); }
+
+/* Edition pager in the dateline strip */
+.newsroom-edition-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.newsroom-nav-btn {
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1;
+  background: none;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  width: 26px;
+  height: 24px;
+  cursor: pointer;
+  padding: 0;
+}
+.newsroom-nav-btn:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+.newsroom-nav-btn:disabled { border-color: var(--rule); color: var(--rule); cursor: default; }
+
+/* ── Sections & kickers ─────────────────────────────────────────────── */
+
+.newsroom-section-head {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--kicker);
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 4px 2px;
+  margin: 30px 0 16px;
+}
+
+.newsroom-kicker {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--kicker);
+  margin-bottom: 6px;
+}
+
+/* ── Lead story ─────────────────────────────────────────────────────── */
+
+.newsroom-lead {
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 22px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.newsroom-lead h2 {
+  font-size: clamp(28px, 4.5vw, 42px);
+  font-weight: 800;
+  line-height: 1.12;
+  margin: 0 0 12px;
+}
+
+.newsroom-lead .newsroom-dek {
+  font-size: 18px;
+  line-height: 1.55;
+  color: #33302a;
+  margin: 0;
+}
+
+.newsroom-lead .newsroom-dek::first-letter {
+  font-size: 3.1em;
+  font-weight: 700;
+  float: left;
+  line-height: 0.85;
+  padding: 4px 8px 0 0;
+}
+
+/* ── Column grids ───────────────────────────────────────────────────── */
+
+.newsroom-columns {
+  columns: 3;
+  column-gap: 34px;
+  column-rule: 1px solid var(--rule);
+}
+
+@media (max-width: 900px) { .newsroom-columns { columns: 2; } }
+@media (max-width: 600px) { .newsroom-columns { columns: 1; } }
+
+/* ── Column articles ────────────────────────────────────────────────── */
+
+.newsroom-item {
+  break-inside: avoid;
+  margin: 0 0 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+}
+
+.newsroom-item h3 {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.22;
+  margin: 0 0 8px;
+}
+
+.newsroom-item:hover h3,
+.newsroom-lead:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+.newsroom-item p {
+  font-size: 14.5px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  color: #2e2b26;
+}
+
+.newsroom-byline {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.newsroom-readmore {
+  color: var(--kicker);
+  font-weight: 700;
+}
+
+/* ── Full-article (deep dive) view ──────────────────────────────────── */
+
+.newsroom-article {
+  border: 1px solid var(--ink);
+  background: #fffdf8;
+  padding: 30px 36px 34px;
+  margin: 24px 0;
+}
+
+.newsroom-article h2 {
+  font-size: clamp(24px, 3.5vw, 34px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 8px;
+}
+
+.newsroom-article .newsroom-byline { margin-bottom: 14px; }
+
+.newsroom-article-hr { border: none; border-top: 3px double var(--ink); margin: 0 0 18px; }
+
+.newsroom-article-body {
+  columns: 2;
+  column-gap: 36px;
+  column-rule: 1px solid var(--rule);
+  font-size: 15.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  text-align: justify;
+  hyphens: auto;
+}
+@media (max-width: 700px) { .newsroom-article-body { columns: 1; } }
+
+.newsroom-article-body em { font-style: italic; }
+
+.newsroom-original-link {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kicker);
+}
+
+.newsroom-article-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+}
+
+.newsroom-actions button {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+}
+.newsroom-actions button:hover { background: var(--ink); color: var(--paper); }
+.newsroom-actions .newsroom-danger { border-color: var(--kicker); color: var(--kicker); }
+.newsroom-actions .newsroom-danger:hover { background: var(--kicker); color: #fff; }
+
+/* ── Form (matches the skin; behavior unchanged) ────────────────────── */
+
+.newsroom-form {
+  border: 1px solid var(--ink);
+  background: #fffdf8;
+  padding: 24px 28px;
+  margin-top: 20px;
+  font-family: inherit;
+}
+
+.newsroom-form h3 {
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 6px;
+  margin: 0 0 16px;
+}
+
+.newsroom-form label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.newsroom-form input[type="text"],
+.newsroom-form input[type="url"],
+.newsroom-form input[type="datetime-local"],
+.newsroom-form textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 0;
+}
+
+.newsroom-form .newsroom-error {
+  border: 1px solid var(--kicker);
+  color: var(--kicker);
+  padding: 8px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* ── Newsroom Desk (tab strip + reporter chat) ──────────────────────── */
+
+.desk-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 18px;
+}
+
+.desk-tab {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--rule);
+  border-bottom: none;
+  padding: 7px 18px;
+  cursor: pointer;
+  color: var(--ink-dim);
+}
+.desk-tab-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.desk-wrap { display: flex; gap: 22px; min-height: 420px; }
+@media (max-width: 760px) { .desk-wrap { flex-direction: column; } }
+
+.desk-roster { flex: 0 0 220px; display: flex; flex-direction: column; gap: 8px; }
+
+.desk-card {
+  font-family: inherit;
+  text-align: left;
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.desk-card:hover { border-color: var(--ink); }
+.desk-card-active { border: 2px solid var(--ink); background: #fffdf8; }
+.desk-card-name { font-weight: 700; font-size: 15px; }
+.desk-card-beat { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--kicker); }
+.desk-card-meta { font-size: 11.5px; color: var(--ink-dim); }
+
+.desk-chat { flex: 1; display: flex; flex-direction: column; border: 1px solid var(--ink); background: #fffdf8; }
+.desk-chat-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 16px; border-bottom: 1px solid var(--rule); font-size: 13px;
+}
+.desk-chat-head strong { font-size: 16px; }
+
+.desk-log { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; max-height: 480px; }
+
+.desk-msg { max-width: 78%; }
+.desk-msg-editor { align-self: flex-end; text-align: right; }
+.desk-msg-beat { align-self: flex-start; }
+.desk-msg-pending { align-self: flex-start; color: var(--ink-dim); font-size: 13px; }
+.desk-msg-who { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 2px; }
+.desk-msg-text {
+  display: inline-block; font-size: 14px; line-height: 1.5;
+  border: 1px solid var(--rule); padding: 8px 12px; background: #fff; text-align: left;
+}
+.desk-msg-editor .desk-msg-text { background: var(--paper); border-color: var(--ink); }
+
+.desk-empty { color: var(--ink-dim); font-style: italic; font-size: 14px; }
+.desk-error { color: var(--kicker); font-size: 13px; padding: 6px 16px; }
+
+.desk-compose { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--rule); }
+.desk-compose input {
+  flex: 1; font-family: inherit; font-size: 14px; padding: 8px 10px;
+  border: 1px solid var(--rule); background: var(--paper); border-radius: 0;
+}
+.desk-compose button {
+  font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; background: none; border: 1px solid var(--ink); color: var(--ink);
+  padding: 6px 16px; cursor: pointer;
+}
+.desk-compose button:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+.desk-compose button:disabled { border-color: var(--rule); color: var(--rule); cursor: default; }
+
+/* ── Print edition (Dave: "put together a print friendly version") ──── */
+
+/* On-screen preview of the sheet: looks like the paper it becomes.
+   The sheet itself reuses .newsroom-paper (masthead/dateline/typography). */
+.newsroom-print-page { min-height: 60vh; }
+
+.newsroom-print-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.newsroom-print-hint { font-style: italic; color: #6a6459; font-size: 0.9rem; }
+
+.newsroom-print-sheet {
+  margin: 0 auto;
+  max-width: 900px;
+  /* Same palette as .newsroom-paper — the print view renders outside that
+     wrapper (early return), so it needs its own copy of the vars. */
+  --ink: #1c1a17; --ink-dim: #5c564d; --paper: #faf7f0;
+  --rule: #c9c2b4; --kicker: #8b1a1a;
+  background: var(--paper); color: var(--ink);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  border: 1px solid var(--rule);
+  padding: 28px 32px 40px;
+}
+
+.newsroom-print-lead { border-bottom: 2px solid #1c1a17; padding-bottom: 18px; margin-bottom: 4px; }
+.newsroom-print-lead h2 { font-size: 2.1rem; line-height: 1.15; margin: 6px 0 4px; }
+.newsroom-print-lead .newsroom-print-body { font-size: 1.02rem; line-height: 1.5; margin-top: 8px; }
+
+/* Three-column section flow. Stories/sections must NOT carry break-inside:
+   avoid — a full deep dive (~300 words) then can't fit the column's remainder
+   and jumps whole, leaving dead-whitespace holes (10/25 first print cut:
+   29 blank lines of layout). Splitting a story across a column break is what
+   newspapers actually do; the dotted rule carries over fine. */
+.newsroom-print-cols { column-count: 3; column-gap: 26px; column-rule: 1px solid #c9c2b4; }
+.newsroom-print-section { margin-bottom: 8px; }
+.newsroom-print-section .newsroom-section-head { break-after: avoid; }
+.newsroom-print-story h3 { break-after: avoid; }
+.newsroom-print-story {
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dotted #c9c2b4;
+}
+.newsroom-print-story h3 { font-size: 1.02rem; margin: 0 0 4px; line-height: 1.25; }
+.newsroom-print-body { font-size: 0.86rem; line-height: 1.45; }
+.newsroom-print-src { font-size: 0.72rem; color: #5c564d; margin-top: 4px; word-break: break-all; }
+.newsroom-print-footer {
+  margin-top: 22px; padding-top: 8px; border-top: 2px solid #1c1a17;
+  font-size: 0.72rem; font-style: italic; color: #5c564d; text-align: center;
+}
+
+/* What actually prints. Everything chrome-ish goes away, the sheet goes full
+   bleed with its own page margins via @page. Gated on the body class so these
+   rules only exist while the print preview is mounted — printing any other
+   app is untouched. */
+@media print {
+  @page { margin: 14mm; }
+  body.newsroom-printing * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body.newsroom-printing .header,
+  body.newsroom-printing .app-header,
+  body.newsroom-printing .desk-tabs,
+  body.newsroom-printing .newsroom-no-print { display: none !important; }
+  body.newsroom-printing,
+  body.newsroom-printing #root,
+  body.newsroom-printing .app,
+  body.newsroom-printing .app-window {
+    background: #fff !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .newsroom-print-sheet {
+    border: none !important;
+    max-width: none;
+    padding: 0;
+    background: #fff;
+    color: #000;
+  }
+  .newsroom-print-src a { color: #000; text-decoration: none; }
+}

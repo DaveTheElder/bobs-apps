@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Publish frontend/dist to the `pages` branch as a synthetic tree commit.
 # dist/ is not tracked on main; LilServ's pages-deploy copies whatever is on
-# pages/ into /home/chimera/homelab/sites/bobs-apps/ within seconds.
+# pages/ into the server's sites dir (~/homelab/sites/bobs-apps/) within seconds.
 set -euo pipefail
-REPO=/home/marvin/bobs-apps
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST=$REPO/frontend/dist
 [ -f "$DIST/index.html" ] || { echo "dist missing — run npm run build first"; exit 1; }
 

@@ -1,3 +1,5 @@
+// apps/Calculator.jsx — four-function calculator: prev/operator/waiting state
+// machine driven by keypad and keyboard input.
 import React, { useState } from 'react';
 
 export default function Calculator() {

@@ -1,3 +1,5 @@
+// apps/Converter.jsx — unit converter over the static categories map below;
+// pure client-side factor math, no backend.
 import React, { useState } from 'react';
 
 const categories = {

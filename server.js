@@ -9,11 +9,14 @@ const path = require('path');
 
 const { db, DB_PATH, DOCS_DIR, SLIDESHOW_DIR, SLIDESHOW_AUDIO_DIR, initDB } = require('./src/db');
 const coreRoutes = require('./src/routes/core');
+const phaseRoutes = require('./src/routes/phases');
 const docsRoutes = require('./src/routes/docs');
 const ragRoutes = require('./src/routes/rag');
 const astroRoutes = require('./src/routes/astro');
 const ttsRoutes = require('./src/routes/tts');
 const slideshowRoutes = require('./src/routes/slideshows');
+const newsRoutes = require('./src/routes/news');
+const yardRoutes = require('./src/routes/yard');
 const { AudioJobs } = require('./src/audio');
 
 const app = express();
@@ -23,11 +26,14 @@ app.use(express.json({ limit: '50mb' }));
 // ---- routes ---------------------------------------------------------------
 const audioJobs = new AudioJobs({ db, audioDir: SLIDESHOW_AUDIO_DIR });
 app.use(coreRoutes({ db, DB_PATH }));
+app.use(phaseRoutes({ db }));
 app.use(docsRoutes({ db, DOCS_DIR }));
 app.use(ragRoutes({ db, DOCS_DIR, DB_PATH }));
 app.use(astroRoutes());
 app.use(ttsRoutes({ DOCS_DIR }));
 app.use(slideshowRoutes({ db, SLIDESHOW_DIR, audioJobs }));
+app.use(newsRoutes({ db }));
+app.use(yardRoutes({ db }));
 
 // Health check — also what start.sh should probe.
 app.get('/health', (req, res) => {

@@ -8,7 +8,7 @@ live (`POST /api/docs/upload`), old library restored through it and truly indexe
 
 ## 2026-09-02 session findings (supersede parts of the 09-01 notes below)
 
-1. **Caddy route fixed & verified.** Working config in source `/home/chimera/homelab/Caddyfile`,
+1. **Caddy route fixed & verified.** Working config in source `~/homelab/Caddyfile`,
    lines ~56/59: `reverse_proxy bobs-apps:8080` for both `/api/*` and `/docs/*`.
 2. **The 09-01 "both containers on homelab bridge" claim was wrong.** `docker inspect` showed
    `homelab-bobs-apps` only on `bobs-apps-code_default`; Caddy on `homelab`. That's why both
@@ -52,20 +52,20 @@ Note: recreating drops the manual alias; recreate with this block instead of re-
 git push origin :data-migration
 
 # Remove the crash-looping old container if any remnants:
-docker compose -f /home/chimera/homelab/bobs-apps-code/docker-compose.yml down  # only if you want to nuke it
+docker compose -f ~/homelab/bobs-apps-code/docker-compose.yml down  # only if you want to nuke it
 ```
 
 ## Key facts for next session
 
-- **Repo:** `bob/bobs-apps` on Forgejo at `192.168.0.222/git/` (access via `/git/` prefix, not bare domain)
-- **Local clone:** `/home/marvin/bobs-apps` (this box is .153)
+- **Repo:** `bob/bobs-apps` on Forgejo at `homelab.example/git/` (access via `/git/` prefix, not bare domain)
+- **Local clone:** `~/repos/bobs-apps` (this box is .153)
 - **Token:** in `~/.git-credentials` on this box; also embedded in DEPLOY.md line 30
-- **LilServ manual:** `http://192.168.0.222/manual.html` — documents pages-deploy, Caddy setup, homelab layout
-- **Pages deploy:** push to `pages` branch → auto-copies to `/home/chimera/homelab/sites/bobs-apps/` → served at `/pages/bobs-apps/`
+- **LilServ manual:** `http://homelab.example/manual.html` — documents pages-deploy, Caddy setup, homelab layout
+- **Pages deploy:** push to `pages` branch → auto-copies to `~/homelab/sites/bobs-apps/` → served at `/pages/bobs-apps/`
 - **Backend container name:** `homelab-bobs-apps`, image `lilserv/bobs-apps:latest`, port map `127.0.0.1:8090→8080/tcp`, network `homelab` (bridge d96433ec)
 - **Caddy container name:** `homelab-caddy`, ports 80/443, same `homelab` network
-- **LM Studio (RAG LLM):** `192.168.0.191:1234` — needs ~50s reasoning before first token; RAG timeout set to 240s in code
-- **Data lives at:** `/home/chimera/homelab/bobs-apps-data/` on LilServ (mounted as `/data` in container)
+- **LM Studio (RAG LLM):** `hotrod.example:1234` — needs ~50s reasoning before first token; RAG timeout set to 240s in code
+- **Data lives at:** `~/homelab/bobs-apps-data/` on LilServ (mounted as `/data` in container)
 
 ## Approval workflow reminder (Dave's preference)
 

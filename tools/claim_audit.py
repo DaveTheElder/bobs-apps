@@ -22,12 +22,13 @@ Exit status: 0 = every claim verified, 1 = at least one ERR,
 """
 import argparse
 import json
+import os
 import re
 import sys
 import urllib.request
 from datetime import date
 
-BASE = "http://192.168.0.222/api/astro"
+BASE = os.environ.get("BOBS_APPS_BASE", "http://127.0.0.1:8090") + "/api/astro"
 TOLERANCE_DEG = 1.5   # paper IV-A: audit tolerance against engine truth
 
 SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",

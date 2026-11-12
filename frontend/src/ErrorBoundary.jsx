@@ -1,3 +1,5 @@
+// src/ErrorBoundary.jsx — top-level React error boundary: renders a crash card
+// with a reload action instead of a white screen when any app throws.
 import React from 'react';
 
 class ErrorBoundary extends React.Component {

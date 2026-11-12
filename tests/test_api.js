@@ -1,5 +1,15 @@
 // tests/test_api.js — boots server.js against a TEMP db, hits every docs/RAG route.
 // Run: node tests/test_api.js   (uses PORT 8091 by default)
+
+/**
+ * TABLE OF CONTENTS
+ *  L   1- 52  boot: temp-db env isolation, server spawn, check() helper
+ *  L  53- 94  docs: registry, preview blocks, file serving
+ *  L  95-199  RAG: status, query validation, sessions, models, warm
+ *  L 200-230  docs: server-side upload + delete
+ *  L 231-289  astro: chart, geocode, timezone handling
+ *  L 290-384  yard maps: surveys, points, seq ordering + summary
+ */
 process.env.PORT = process.env.TEST_PORT || '8091';
 const fs = require('fs');
 const os = require('os');
@@ -37,7 +47,7 @@ async function check(name, fn) {
   if (!up) { console.error('server did not start:\n' + serverLog); process.exit(1); }
 
   // ---- documents: register with a REAL file on disk -------------------------
-  const samplePdf = path.join(ROOT, 'documents', 'test-report.pdf');
+  const samplePdf = path.join(ROOT, 'tests', 'fixtures', 'test-report.pdf');
   fs.copyFileSync(samplePdf, path.join(tmpDir, 'documents', 'sample.pdf'));
 
   await check('GET /api/docs starts empty', async () => {
@@ -274,6 +284,98 @@ async function check(name, fn) {
     if (r.status !== 400) throw new Error(`expected 400, got ${r.status}`);
     const d = await r.json();
     if (!/IANA/.test(d.error)) throw new Error('unhelpful error: ' + d.error);
+  });
+
+  // ---- yard map: surveys + GPS points ----------------------------------------
+  await check('GET /api/yard/maps starts empty', async () => {
+    const d = await (await fetch(base + '/api/yard/maps')).json();
+    if (!Array.isArray(d) || d.length !== 0) throw new Error('expected []');
+  });
+
+  await check('POST /api/yard/maps rejects empty name', async () => {
+    const r = await fetch(base + '/api/yard/maps', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: '   ' })
+    });
+    if (r.status !== 400) throw new Error(`expected 400, got ${r.status}`);
+  });
+
+  let yardMap;
+  await check('POST /api/yard/maps creates a survey', async () => {
+    const r = await fetch(base + '/api/yard/maps', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'test yard' })
+    });
+    yardMap = await r.json();
+    if (!r.ok || !yardMap.id || !/\d{4}-/.test(yardMap.created_at))
+      throw new Error('missing app-side id/ISO timestamp: ' + JSON.stringify(yardMap));
+  });
+
+  await check('POST point validates coordinates', async () => {
+    const bad = await fetch(`${base}/api/yard/maps/${yardMap.id}/points`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat: 999, lng: -30 })
+    });
+    if (bad.status !== 400) throw new Error(`lat 999 accepted?! got ${bad.status}`);
+    const missing = await fetch(`${base}/api/yard/maps/${yardMap.id}/points`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat: 39.7 })
+    });
+    if (missing.status !== 400) throw new Error(`missing lng accepted?! got ${missing.status}`);
+  });
+
+  let yPts = [];
+  await check('POST points appends with seq and returns the row', async () => {
+    // three corners near Denver; known spacing to sanity-check storage
+    const corners = [
+      { lat: 39.7000, lng: -104.9900, accuracy: 4 },
+      { lat: 39.7001, lng: -104.9900 },
+      { lat: 39.7001, lng: -104.9890 },
+    ];
+    for (const [i, c] of corners.entries()) {
+      const r = await fetch(`${base}/api/yard/maps/${yardMap.id}/points`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(c)
+      });
+      const p = await r.json();
+      if (!r.ok || p.seq !== i + 1) throw new Error(`append ${i} broke: ${JSON.stringify(p)}`);
+      yPts.push(p);
+    }
+    if (yPts[0].accuracy !== 4 || yPts[1].accuracy !== null)
+      throw new Error('accuracy not stored/nullable as expected');
+  });
+
+  await check('GET map detail returns points ordered by seq', async () => {
+    const d = await (await fetch(`${base}/api/yard/maps/${yardMap.id}`)).json();
+    if (d.map.name !== 'test yard') throw new Error('map wrong');
+    if (d.points.length !== 3 || d.points[0].seq !== 1 || d.points[2].lng !== -104.989)
+      throw new Error('points wrong: ' + JSON.stringify(d.points));
+  });
+
+  await check('PATCH point renames', async () => {
+    const r = await fetch(`${base}/api/yard/points/${yPts[0].id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ label: 'NE corner' })
+    });
+    const p = await r.json();
+    if (!r.ok || p.label !== 'NE corner') throw new Error('rename failed');
+  });
+
+  await check('DELETE point re-seqs the walk order', async () => {
+    const r = await fetch(`${base}/api/yard/points/${yPts[1].id}`, { method: 'DELETE' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await (await fetch(`${base}/api/yard/maps/${yardMap.id}`)).json();
+    if (d.points.length !== 2 || d.points.map((p) => p.seq).join() !== '1,2')
+      throw new Error('re-seq failed: ' + JSON.stringify(d.points.map((p) => p.seq)));
+  });
+
+  await check('DELETE map cascades to points explicitly', async () => {
+    const r = await fetch(`${base}/api/yard/maps/${yardMap.id}`, { method: 'DELETE' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const gone = await fetch(`${base}/api/yard/maps/${yardMap.id}`);
+    if (gone.status !== 404) throw new Error('map still exists');
+    const list = await (await fetch(base + '/api/yard/maps')).json();
+    if (list.length !== 0) throw new Error('map list not empty after delete');
   });
 
   console.log(`\n${passed} passed, ${failed} failed`);

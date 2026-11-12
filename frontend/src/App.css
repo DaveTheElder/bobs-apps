@@ -139,6 +139,53 @@ tr:hover td { background: rgba(108, 92, 231, 0.05); }
 .progress-bar { width: 100%; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
 .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
 
+/* ==================== PROJECT HUB: PHASE PANEL ==================== */
+.row-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.row-expanded td { background: rgba(116,185,255,0.06); }
+.detail-row > td { padding: 0 12px 12px; }
+.phase-panel { display: flex; flex-direction: column; gap: 10px; }
+.phase-empty { color: var(--text-dim); font-size: 13px; padding: 6px 0; }
+.phase-block { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; }
+.phase-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.phase-head strong { flex: 1; min-width: 120px; }
+.phase-count { font-size: 12px; color: var(--text-dim); }
+.phase-actions { display: flex; align-items: center; gap: 4px; }
+.task-list { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
+.task-row { display: flex; align-items: center; gap: 8px; padding: 3px 4px; border-radius: 6px; flex-wrap: wrap; }
+.task-note { display: flex; gap: 6px; width: 100%; align-items: flex-start; padding: 2px 0 4px 32px; }
+.task-note textarea { flex: 1; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-size: 12px; padding: 5px 8px; resize: vertical; }
+.task-check.has-notes, .btn-ghost.has-notes { color: var(--yellow); }
+.proj-head { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.proj-desc { font-size: 13px; color: var(--text-dim); }
+.proj-notes { background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); font-size: 13px; padding: 6px 8px; resize: vertical; font-family: inherit; }
+.link-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.link-chip { font-size: 12px; background: rgba(116,185,255,0.15); color: var(--blue);
+  border-radius: 20px; padding: 3px 10px; text-decoration: none; }
+.link-chip:hover { background: rgba(116,185,255,0.3); }
+.links-table { border-collapse: collapse; font-size: 13px; width: 100%; }
+.links-table th { text-align: left; color: var(--text-dim); font-weight: 500;
+  font-size: 11px; text-transform: uppercase; padding: 2px 12px 4px 0; }
+.links-table td { padding: 3px 12px 3px 0; vertical-align: top; }
+.links-table a { color: var(--blue); text-decoration: none; white-space: nowrap; }
+.links-table a:hover { text-decoration: underline; }
+.link-desc { color: var(--text-dim); }
+.row-chips { margin-top: 4px; }
+.row-chips .link-chip { font-size: 11px; padding: 2px 8px; }
+.task-row:hover { background: rgba(255,255,255,0.04); }
+.task-check { background: none; border: none; cursor: pointer; font-size: 14px; width: 24px;
+  color: var(--text-dim); padding: 0; }
+.task-check.checked { color: var(--green); }
+.task-title { flex: 1; font-size: 13px; }
+.task-title.strike { text-decoration: line-through; color: var(--text-dim); }
+.task-add input, .phase-add input { background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); padding: 5px 8px; font-size: 13px; }
+.task-add input { width: 220px; }
+.phase-add { display: flex; gap: 8px; align-items: center; }
+.phase-add input { flex: 1; max-width: 340px; }
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
   .form-row { grid-template-columns: 1fr; }

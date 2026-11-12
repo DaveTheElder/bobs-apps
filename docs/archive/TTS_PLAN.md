@@ -14,7 +14,7 @@
 
 - Read-aloud lives in `frontend/src/apps/DocumentRepository.jsx:257-332`: `useReadAloud()` (raw Web Speech API, never sets `u.voice`), `blocksToSpeechText()`, and the Chrome pause/resume stall hack at :276-285.
 - Backend is Express with route factories: `app.use(docsRoutes({ db, DOCS_DIR }))` in `server.js`. New route follows the same shape. No auth on any bobs-apps route today (LAN + Caddy front door); TTS inherits that posture — it's a proxy to a CPU model, not a data boundary.
-- Compose file: `/home/marvin/bobs-apps/docker-compose.yml` (copy at `/home/chimera/homelab/bobs-apps-code`). bobs-apps declares `networks: [default, homelab]` with `homelab` external — the **skill-documented** requirement from two alias-loss incidents. Kokoro must join the same network.
+- Compose file: `~/repos/bobs-apps/docker-compose.yml` (copy at `~/homelab/bobs-apps-code`). bobs-apps declares `networks: [default, homelab]` with `homelab` external — the **skill-documented** requirement from two alias-loss incidents. Kokoro must join the same network.
 - Kokoro-FastAPI API (verified against repo docs):
   - `POST /v1/audio/speech` body `{model:"kokoro", input, voice:"af_heart", response_format:"mp3", speed}` → audio bytes. Speed range 0.25–4.0.
   - `GET /v1/voices` → voice list. `GET /health` for readiness. Default port 8880.
@@ -33,7 +33,7 @@ Fallback: if `GET /api/tts/voices` fails (service down), the UI falls back to th
 
 ### Task 0.1: Add kokoro to the compose stack
 
-**Files:** Modify `/home/chimera/homelab/bobs-apps-code/docker-compose.yml` (repo copy at `~/bobs-apps/docker-compose.yml` — land it in the repo first, then Dave pulls).
+**Files:** Modify `~/homelab/bobs-apps-code/docker-compose.yml` (repo copy at `~/repos/bobs-apps/docker-compose.yml` — land it in the repo first, then Dave pulls).
 
 Append service:
 
@@ -48,7 +48,7 @@ Append service:
       DEFAULT_VOICE: "af_heart"
       DEVICE: "cpu"
     volumes:
-      - /home/chimera/homelab/kokoro-voices:/api/src/processing/voices_registry.json # optional pin; omit to use image defaults
+      - ~/homelab/kokoro-voices:/api/src/processing/voices_registry.json # optional pin; omit to use image defaults
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8880/health"]
       interval: 30s
@@ -155,7 +155,7 @@ Replace the current read-aloud button row with: play/pause, stop, voice select, 
 1. `cd frontend && npm run build` → `bash scripts/publish_pages.sh`; verify hashed asset name via bare curl of `/pages/bobs-apps/index.html`.
 2. Push `main`; Dave pulls on LilServ and runs the paste-able block:
    ```bash
-   cd /home/chimera/homelab/bobs-apps-code && git pull --ff-only
+   cd ~/homelab/bobs-apps-code && git pull --ff-only
    docker compose config            # sanity: kokoro service + homelab network parse
    docker compose up -d kokoro bobs-apps
    ```

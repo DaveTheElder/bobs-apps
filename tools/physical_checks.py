@@ -19,11 +19,12 @@ Usage:
 """
 import argparse
 import json
+import os
 import sys
 import urllib.request
 from datetime import date, timedelta
 
-BASE = "http://192.168.0.222/api/astro"
+BASE = os.environ.get("BOBS_APPS_BASE", "http://127.0.0.1:8090") + "/api/astro"
 EQUINOX_2026_UTC = 23.0   # true value: Sep 23, ~02:21 UTC (paper III-C)
 EQUINOX_TOL_DAYS = 2.0    # linear interpolation over one-day steps is coarse
 MOON_BAND = (11.0, 16.0)  # deg/day physical bounds perigee..apogee

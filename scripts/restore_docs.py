@@ -2,7 +2,7 @@
 import os, sqlite3, json
 import chromadb
 
-ROOT = "/home/marvin/bobs-apps"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 db_path = os.path.join(ROOT, "bobs-apps.db.restored")
 
 client = chromadb.PersistentClient(path=os.path.join(ROOT, "chromadb_data"))

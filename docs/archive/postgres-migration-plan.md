@@ -1,6 +1,6 @@
 # bobs-apps → PostgreSQL migration plan (LilServ)
 
-Date: 2026-09-05 · Status: v1 final · Repo: `/home/marvin/bobs-apps` (main @ `630a93f`) · Deploy target: LilServ 192.168.0.222, compose project `/home/chimera/homelab/bobs-apps-code`, data dir `/home/chimera/homelab/bobs-apps-data` (mounted at `/data`)
+Date: 2026-09-05 · Status: v1 final · Repo: `~/repos/bobs-apps` (main @ `630a93f`) · Deploy target: LilServ homelab.example, compose project `~/homelab/bobs-apps-code`, data dir `~/homelab/bobs-apps-data` (mounted at `/data`)
 
 ---
 
@@ -34,9 +34,9 @@ services:
       POSTGRES_USER: bobsapps
       POSTGRES_PASSWORD_FILE: /run/secrets/pgpass   # or env_file below
     env_file:
-      - /home/chimera/homelab/bobs-apps-data/pg.env  # untracked; contains POSTGRES_PASSWORD=*** mode 600>
+      - ~/homelab/bobs-apps-data/pg.env  # untracked; contains POSTGRES_PASSWORD=*** mode 600>
     volumes:
-      - /home/chimera/homelab/bobs-apps-data/pgdata:/var/lib/postgresql/data   # host path matches existing style, absolute on purpose
+      - ~/homelab/bobs-apps-data/pgdata:/var/lib/postgresql/data   # host path matches existing style, absolute on purpose
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bobsapps -d bobsapps"]
       interval: 15s
@@ -51,8 +51,8 @@ App depends_on ordering: add to bobs-apps service `depends_on: { bobs-apps-db: {
 **Backups:** nightly cron on LilServ (host crontab is fine):
 ```bash
 docker exec homelab-bobs-apps-db pg_dump -U bobsapps -d bobsapps --format=custom \
-  > /home/chimera/homelab/bobs-apps-data/backups/bobsapps-$(date +\%F).dump && \
-  find /home/chimera/homelab/bobs-apps-data/backups -name '*.dump' -mtime +14 -delete
+  > ~/homelab/bobs-apps-data/backups/bobsapps-$(date +\%F).dump && \
+  find ~/homelab/bobs-apps-data/backups -name '*.dump' -mtime +14 -delete
 ```
 **A backup you haven't restored is a rumor.** Before cutover, run one `pg_restore --create` into a scratch DB and count rows.
 
@@ -127,17 +127,17 @@ Dual-mode `DB_BACKEND` flag has a kill condition: removed no later than one week
 
 ```bash
 # 0) pull the migration branch/commit, review compose diff first
-cd /home/chimera/homelab/bobs-apps-code && git fetch && git log --oneline origin/main -1
+cd ~/homelab/bobs-apps-code && git fetch && git log --oneline origin/main -1
 # 1) secrets (once): write pg.env mode 600 with POSTGRES_PASSWORD=<strong>, DATABASE_URL=... matching it
 #    then copy compose additions (bobs-apps-db service + env/depends_on on app side) into the deployed compose.yml; diff them.
-chmod 600 /home/chimera/homelab/bobs-apps-data/pg.env
+chmod 600 ~/homelab/bobs-apps-data/pg.env
 
 docker compose up -d bobs-apps-db
 until docker exec homelab-bobs-apps-db pg_isready -U bobsapps -d bobsapps; do sleep 2; done   # wait, don't guess
 
 # 2) backup BEFORE touching anything (covers the migration itself):
 docker exec homelab-bobs-apps pkill -f node || true   # freeze writes: stop app cleanly instead if you prefer `docker compose stop bobs-apps`
-cp /home/chimera/homelab/bobs-apps-data/bobs-apps.db{,-pre-pg-$(date +%F)}
+cp ~/homelab/bobs-apps-data/bobs-apps.db{,-pre-pg-$(date +%F)}
 
 # 3) run migration from inside the app container (it has both DB mounts):
 docker compose exec bobs-apps node tools/migrate-sqlite-to-pg.js
@@ -145,8 +145,8 @@ docker compose exec bobs-apps node tools/migrate-sqlite-to-pg.js
 
 # 4) flip + smoke:
 docker compose up -d --build bobs-apps
-curl -sf http://192.168.0.222/api/rag/sessions | head -c 300   # expect your "Older history" + recent sessions listed
-curl -sf http://192.168.0.222/api/apps >/dev/null && echo apps-ok
+curl -sf http://homelab.example/api/rag/sessions | head -c 300   # expect your "Older history" + recent sessions listed
+curl -sf http://homelab.example/api/apps >/dev/null && echo apps-ok
 docker compose exec bobs-apps-db psql -U bobsapps -d bobsapps -c 'select count(*) from rag_messages;'
 
 # sideways:

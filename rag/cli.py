@@ -80,7 +80,8 @@ def cmd_query(args):
 
     _emit(query_documents(
         args.query, model=args.model, k=args.k, max_tokens=args.max_tokens,
-        temperature=args.temperature, reasoning_effort=args.reasoning_effort))
+        temperature=args.temperature, reasoning_effort=args.reasoning_effort,
+        api_url=args.api_url))
     return 0
 
 
@@ -104,8 +105,11 @@ def main():
 
     q = sub.add_parser("query")
     q.add_argument("query")
-    # LM Studio model id; omit -> server uses whatever is loaded (legacy behavior)
-    q.add_argument("--model", default=None)
+    q.add_argument("--model", default=None,
+                   help="model id on the target provider; omit -> provider's loaded model")
+    # Chat-completions URL for THIS request (the Node route resolves RAG_PROVIDERS);
+    # omit -> LM_STUDIO_URL env default. One server fronts several providers now.
+    q.add_argument("--api-url", dest="api_url", default=None)
     # Generation knobs from the app's settings menu; omit -> module/env defaults.
     q.add_argument("--k", type=int, default=None, help="retrieval top-k")
     q.add_argument("--max-tokens", dest="max_tokens", type=int, default=None)

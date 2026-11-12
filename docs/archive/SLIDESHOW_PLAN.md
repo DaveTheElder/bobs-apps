@@ -1,6 +1,6 @@
 # Photo Slideshow App — Plan
 
-Status: APPROVED DIRECTION (Dave, 9/23; revised same day — **standalone link, not launcher**). Backend Phase 1 COMPLETE in bobs-apps (`src/routes/slideshows.js`, 22 tests in `npm test`). Frontend ships as its own repo → `http://192.168.0.222/pages/slideshow/` is the link she gets. Next: scaffold frontend repo, Phase 2 editor UI.
+Status: APPROVED DIRECTION (Dave, 9/23; revised same day — **standalone link, not launcher**). Backend Phase 1 COMPLETE in bobs-apps (`src/routes/slideshows.js`, 22 tests in `npm test`). Frontend ships as its own repo → `http://homelab.example/pages/slideshow/` is the link she gets. Next: scaffold frontend repo, Phase 2 editor UI.
 Owner: Bob (build), Dave (approval)
 Related: DOCUMENT_REPO_PLAN.md (upload pattern this reuses), IMPROVEMENT_PLAN.md
 

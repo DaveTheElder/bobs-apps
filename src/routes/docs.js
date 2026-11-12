@@ -215,7 +215,10 @@ module.exports = function docsRoutes({ db, DOCS_DIR }) {
     const filename = safeFilename(req.params.filename);
     const filePath = path.join(DOCS_DIR, filename);
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-    res.download(filePath, filename);
+    // dotfiles:'allow' — send refuses ANY absolute path with a dot-segment
+    // (e.g. DOCS_DIR under ~/.hermes/... in test/cron envs) and 404s it.
+    // safeFilename already stripped path separators, so traversal is impossible.
+    res.download(filePath, filename, { dotfiles: 'allow' });
   });
 
   return router;

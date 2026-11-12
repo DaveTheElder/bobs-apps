@@ -1,3 +1,5 @@
+# scripts/check_deps.py — smoke-check that the Python deps the RAG pipeline
+# needs import cleanly. Run inside .venv after any dependency change.
 import importlib, sys
 for mod in ["pymupdf", "docx", "chromadb", "sentence_transformers", "requests"]:
     try:
